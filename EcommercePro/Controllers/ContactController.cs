@@ -16,7 +16,7 @@ namespace EcommercePro.Controllers
 
         IContact _contact1;
         IEmailService _emailService;
-        public ContactController(IContact contact1 , IEmailService emailService)
+        public ContactController(IContact contact1, IEmailService emailService)
         {
             _contact1 = contact1;
             _emailService = emailService;
@@ -31,37 +31,41 @@ namespace EcommercePro.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(Contact newCont)
+        public IActionResult Add([FromBody] Contact newCont)
         {
             if (newCont == null)
             {
-                return BadRequest("The request body must contain data for creating a contact.");
+                return BadRequest("Contact data is required.");
             }
 
-            if (string.IsNullOrEmpty(newCont.Name))
+            if (ModelState.IsValid)
             {
-                return BadRequest("The 'Name' field is required.");
+                try
+                {
+                    _contact1.Insert(new Contact()
+                    {
+                        Name = newCont.Name,
+                        Message = newCont.Message,
+                        Email = newCont.Email
+                    });
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
+                }
             }
-
-            try
-            {
-                _contact1.Insert(newCont);
-                _contact1.Save();
-                return Ok("Contact created successfully.");
-            }
-            catch (Exception ex)
-            {
-
-                return StatusCode(500, "An error occurred while creating the contact. Please try again later.");
-            }
+            return BadRequest(ModelState);
         }
+
+
 
         [HttpPost("sendMassage")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> SendMessage(SendEmailCommend sendEmail)
         {
             var response = await _emailService.SendEmail(sendEmail.Email, sendEmail.Meassage);
-            if(response == "Success")
+            if (response == "Success")
             {
                 return Ok();
             }

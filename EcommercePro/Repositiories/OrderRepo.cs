@@ -133,12 +133,40 @@ namespace EcommercePro.Repositiories
                         Quantity = oi.Quantity,
                         ProductId = oi.ProductId,
                         ProductName = oi.Product.Name,
-                        ProductImage = oi.Product.Images.FirstOrDefault().imagePath,  // Select first image
+                        ProductImage = oi.Product.Images.FirstOrDefault().imagePath,
                         ProductPrice = oi.Product.Price,
                         ProductDescription = oi.Product.Description
                     }).ToList()
                 })
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<orderDTO>> GetTopProductsBySalesRatioAsync()
+        {
+            var topProducts = await _context.Products
+                .Include(p => p.Images)
+                .OrderByDescending(p => p.Price * p.Quentity) 
+                .Take(5) 
+                .Select(p => new orderDTO
+                {
+                    ProductId = p.Id,
+                    ProductName = p.Name,
+                    ProductDescription = p.Description,
+                    Price = p.Price,
+                    QuantitySold = p.Quentity,
+                    TotalSales = p.Price * p.Quentity,
+                    ImageUrls = p.Images.Select(img => img.imagePath).ToList() 
+                })
+                .ToListAsync();
+
+            decimal totalSales = topProducts.Sum(tp => tp.TotalSales);
+
+            foreach (var product in topProducts)
+            {
+                product.ProfitPercentage = (product.TotalSales / totalSales) * 100;
+            }
+
+            return topProducts;
         }
     }
 }

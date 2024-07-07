@@ -39,6 +39,18 @@ namespace EcommercePro.Controllers
             var orders = await _orderRepository.GetOrdersByUserIdAsync(userId);
             return Ok(orders);
         }
+        [HttpGet("highest-sales")]
+        public async Task<IActionResult> GetHighestSalesRatio()
+        {
+            var highestSalesOrder = await _orderRepository.GetTopProductsBySalesRatioAsync();
+
+            if (highestSalesOrder == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(highestSalesOrder);
+        }
     }
 }
 
