@@ -41,7 +41,7 @@ namespace EcommercePro.Controllers
         [HttpGet]
         public ActionResult GetAllProducts(int pageNumber = 1, int pageSize = 9)
         {
-            var products = _productRepository.GetAll();
+            var products = _productRepository.GetAll().Where(p=>p.IsDeleted == false);
 
             var pagedProducts = products
                 .Skip((pageNumber - 1) * pageSize)
@@ -137,6 +137,7 @@ namespace EcommercePro.Controllers
                 Price = product.Price,
                 Quentity = product.Quentity,
                 CategoryId = product.CategoryId,
+                Discount =product.Discount,
                 ImageUrls = productImages.Select(image=>image.imagePath).ToList() // Set the paginated ImageUrls property
             };
 
@@ -294,14 +295,15 @@ namespace EcommercePro.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "brand")]
+       [Authorize(Roles = "brand")]
         public async Task<IActionResult> PostProduct([FromForm] SetProduct newProduct)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    string userid = User.FindFirst("Id").Value;
+                    //string userid = User.FindFirst("Id").Value;
+                    string userid = newProduct.userid;
 
                     if (userid != null)
                     {
@@ -356,7 +358,9 @@ namespace EcommercePro.Controllers
             {
                 Product product = _productRepository.Get(id);
 
-                string userid = User.FindFirst("Id").Value;
+                //string userid = User.FindFirst("Id").Value;
+                string userid = updateProduct.userid;
+
                 if (userid != null)
                 {
                     int brandId = this._brandService.getByUSersID(userid).Id;

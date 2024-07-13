@@ -115,6 +115,13 @@ namespace EcommercePro.Controllers
                         }
                     }
 
+                    Category categorydb = this._genaricService.Get(id);
+                    if(categorydb.imagepath !=null && updateCategory.FormFile == null)
+                    {
+                        updateCategory.ImagePath = categorydb.imagepath;
+                    }
+
+
                     var isUpdated = _genaricService.Update(id, new Category
                     {
                         Id = id,

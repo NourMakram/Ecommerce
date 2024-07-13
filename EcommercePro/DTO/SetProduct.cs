@@ -19,6 +19,7 @@ namespace EcommercePro.DTO
 
         [Required(ErrorMessage = "The Category of Product is Reqiured")]
         public int CategoryId { get; set; }
+        public string userid { set; get; }
 
     }
 }

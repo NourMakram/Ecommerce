@@ -15,7 +15,7 @@ namespace EcommercePro.Models
 
             CategoryData CurrentCategory = (CategoryData)validationContext.ObjectInstance;
 
-            Category categorydb = context.Categories.FirstOrDefault(category=>category.Name ==  CategoryName);
+            Category categorydb = context.Categories.FirstOrDefault(category=>category.Name ==  CategoryName && category.IsDeleted == false);
             if (categorydb!=null && CurrentCategory.Id != categorydb.Id)
 
                 return new ValidationResult("The Category Name Is Exists");

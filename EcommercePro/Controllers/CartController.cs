@@ -33,7 +33,7 @@ namespace EcommercePro.Controllers
                     UserId = c.UserId,
                     CreatedDate = c.CreatedDate,
                     ProductName = c.product.Name,
-                    ProductImage = c.product.Images.FirstOrDefault().imagePath, // Assuming Product has an Image property
+                    ProductImage = c.product.Images.FirstOrDefault()?.imagePath , // Assuming Product has an Image property
                     ProductPrice = c.product.Price   // Assuming Product has a Price property
                 }).ToList();
 

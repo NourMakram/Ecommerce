@@ -109,7 +109,8 @@ namespace EcommercePro.Controllers
                 Month = new DateTime(year, month, 1).ToString("MMMM"),
                 Year = year,
                 UserCount = userCount, // Include user count in the report
-                ProductSalesDetails = new List<ProductSalesDetailDTO>()
+                ProductSalesDetails = new List<ProductSalesDetailDTO>(),
+               Products = this._context.Products.Where(p => p.BrandId == brandId && p.IsDeleted == false).Count()
             };
 
             decimal brandTotalSales = 0;
@@ -131,6 +132,7 @@ namespace EcommercePro.Controllers
                         QuantitySold = orderItem.Quantity,
                         TotalSales = productTotalSales,
                         ProfitPercentage = (productTotalSales / brandTotalSales) * 100
+
                     });
                 }
             }
